@@ -1,0 +1,13 @@
+npm test
+# Run lint-staged (handles formatting and linting of staged files)
+npx lint-staged
+
+# Run full test suite
+npm run test:run
+
+npm run lint
+
+npm run format
+
+# If we get here, all checks passed
+echo "✅ Pre-commit checks passed! Proceeding with commit..."
