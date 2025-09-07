@@ -15,9 +15,7 @@ const envSchema = z.object({
 const parseEnv = () => {
   try {
     return envSchema.parse({
-      DATABASE_URL:
-        process.env.DATABASE_URL ||
-        "postgres://postgres:postgres@localhost:5432/books_shop",
+      DATABASE_URL: process.env.DATABASE_URL,
       REDIS_URL: process.env.REDIS_URL || "redis://localhost:6379",
       JWT_SECRET:
         process.env.JWT_SECRET ||
