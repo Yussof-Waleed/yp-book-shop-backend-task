@@ -2,7 +2,7 @@
 import { eq } from "drizzle-orm";
 import bcrypt from "bcrypt";
 import { sign, verify } from "hono/jwt";
-import { users } from "./model.js";
+import { users } from "../models/index.js";
 import { db } from "../common/db.js";
 import { redis } from "../common/redis.js";
 import { env } from "../common/env.js";

@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import { registerUser, loginUser, logoutUser } from "../service.js";
 import { db } from "../../common/db.js";
-import { users } from "../model.js";
+import { users } from "../../models/user.js";
 import { eq } from "drizzle-orm";
 import { redis } from "../../common/redis.js";
 

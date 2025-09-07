@@ -3,13 +3,16 @@ import { serve } from "@hono/node-server";
 import { Hono } from "hono";
 import { logger } from "hono/logger";
 import { env } from "./common/env.js";
+
 import authRoutes from "./auth/routes.js";
+import userRoutes from "./users/routes.js";
 
 const app = new Hono();
 
 app.use("*", logger());
 
 app.route("/auth", authRoutes);
+app.route("/profile", userRoutes);
 
 app.get("/", (c) => {
   return c.json({

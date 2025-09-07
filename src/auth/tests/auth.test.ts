@@ -11,7 +11,7 @@ import {
   verifyJWTToken,
 } from "../service.js";
 import { db } from "../../common/db.js";
-import { users } from "../model.js";
+import { users } from "../../models/index.js";
 import { eq } from "drizzle-orm";
 import { redis } from "../../common/redis.js";
 

@@ -9,6 +9,7 @@ export interface DatabaseErrorResponse {
 /**
  * Standardized database error handler that converts database errors
  * into user-friendly HTTP responses with appropriate status codes.
+ * Public utility function for use across the application.
  */
 export function handleDatabaseError(error: unknown): DatabaseErrorResponse {
   if (!(error instanceof Error)) {
@@ -83,6 +84,26 @@ export function handleDatabaseError(error: unknown): DatabaseErrorResponse {
     errorMessage.includes("unique constraint") ||
     errorMessage.includes("duplicate key")
   ) {
+    // Specific user table constraints
+    if (
+      constraintName.includes("users_username_unique") ||
+      errorMessage.includes("users_username_unique")
+    ) {
+      return {
+        status: 409,
+        error: "Username is already taken. Please choose another.",
+      };
+    }
+    if (
+      constraintName.includes("users_email_unique") ||
+      errorMessage.includes("users_email_unique")
+    ) {
+      return {
+        status: 409,
+        error: "Email address is already registered. Please use another.",
+      };
+    }
+    // General username/email detection
     if (errorMessage.includes("username")) {
       return {
         status: 409,
@@ -167,6 +188,7 @@ export function handleDatabaseError(error: unknown): DatabaseErrorResponse {
 
 /**
  * Helper function to send standardized error responses
+ * Public utility function for use in controllers.
  */
 export function sendErrorResponse(c: Context, error: unknown) {
   const dbError = handleDatabaseError(error);

@@ -11,7 +11,7 @@ import { sendErrorResponse } from "@/common/errorHandler.js";
 
 export class AuthController {
   // POST /auth/register - Register new user
-  static async register(c: Context) {
+  public static async register(c: Context) {
     try {
       const data = await c.req.json();
 
@@ -36,7 +36,7 @@ export class AuthController {
   }
 
   // POST /auth/login - Login user
-  static async login(c: Context) {
+  public static async login(c: Context) {
     try {
       const data = await c.req.json();
 
@@ -68,7 +68,7 @@ export class AuthController {
   }
 
   // POST /auth/logout - Logout user
-  static async logout(c: Context) {
+  public static async logout(c: Context) {
     try {
       // Extract token from Authorization header
       const authHeader = c.req.header("Authorization");
@@ -108,7 +108,7 @@ export class AuthController {
   }
 
   // POST /auth/forgot-password - Request password reset
-  static async forgotPassword(c: Context) {
+  public static async forgotPassword(c: Context) {
     try {
       const data = await c.req.json();
 
@@ -137,7 +137,7 @@ export class AuthController {
   }
 
   // POST /auth/reset-password - Reset password with token
-  static async resetPassword(c: Context) {
+  public static async resetPassword(c: Context) {
     try {
       const data = await c.req.json();
 
