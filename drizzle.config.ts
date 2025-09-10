@@ -1,6 +1,6 @@
 // Drizzle ORM config
 export default {
-  schema: ["./src/models/user.ts", "./src/books/model.ts"],
+  schema: ["./src/models/user.ts"],
   out: "./drizzle",
   dialect: "postgresql",
   dbCredentials: {

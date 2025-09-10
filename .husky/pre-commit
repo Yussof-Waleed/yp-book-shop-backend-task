@@ -1,13 +1,31 @@
-npm test
-# Run lint-staged (handles formatting and linting of staged files)
-npx lint-staged
+#!/bin/sh
+set -e
 
-# Run full test suite
-npm run test:run
+echo "🔄 Pre-commit checks starting..."
 
-npm run lint
+# Ensure Docker services are running
+echo "📋 Checking Docker services..."
+if ! docker-compose ps | grep -q "Up"; then
+    echo "🚀 Starting Docker services..."
+    docker-compose up -d
+    echo "⏳ Waiting for services to be ready..."
+    sleep 10
+fi
 
-npm run format
+# Export the external database URL for local testing
+export DATABASE_URL="postgres://postgres:postgres@localhost:5434/books_shop"
+export REDIS_URL="redis://localhost:6380"
+
+echo "🧪 Running tests..."
+npm run test:run:local
+
+echo "🔍 Running linter..."
+npm run lint:local
+
+echo "✨ Checking formatting..."
+npm run format:check:local
+
+echo "✅ All pre-commit checks passed!"
 
 # If we get here, all checks passed
 echo "✅ Pre-commit checks passed! Proceeding with commit..."

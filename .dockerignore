@@ -1,0 +1,74 @@
+# Dependencies
+node_modules
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+
+# Build outputs
+dist
+build
+coverage
+
+
+# Environment files
+.env
+.env.local
+.env.production
+.env.test
+
+
+# Development files
+.git
+.gitignore
+.vscode
+.idea
+
+
+# Documentation (except essential ones)
+*.md
+!README.md
+
+
+# Test files 
+**/*.test.ts
+**/*.test.js
+**/*.spec.ts
+**/*.spec.js
+src/tests
+vitest.config*
+jest.config*
+
+
+# Development tools
+.eslintrc*
+.prettier*
+eslint.config*
+
+
+# PM and planning files
+pm/
+Todo
+
+
+# Logs
+logs
+*.log
+
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+
+# macOS
+.DS_Store
+
+
+# Windows
+Thumbs.db
+
+
+
