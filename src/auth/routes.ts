@@ -1,4 +1,3 @@
-// Auth routes for Hono
 import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
 import { AuthController } from "./controller.js";
@@ -21,7 +20,7 @@ authRoutes.post(
   zValidator("json", loginSchema),
   AuthController.login,
 );
-authRoutes.post("/logout", AuthController.logout); // No validation needed, just needs auth header
+authRoutes.post("/logout", AuthController.logout);
 authRoutes.post(
   "/forgot-password",
   zValidator("json", forgotPasswordSchema),

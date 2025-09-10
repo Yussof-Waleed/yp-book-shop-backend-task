@@ -1,4 +1,3 @@
-// Database error handler utility - provides consistent error responses
 import type { Context } from "hono";
 
 export interface DatabaseErrorResponse {
@@ -6,11 +5,6 @@ export interface DatabaseErrorResponse {
   error: string;
 }
 
-/**
- * Standardized database error handler that converts database errors
- * into user-friendly HTTP responses with appropriate status codes.
- * Public utility function for use across the application.
- */
 export function handleDatabaseError(error: unknown): DatabaseErrorResponse {
   if (!(error instanceof Error)) {
     return {
@@ -37,7 +31,6 @@ export function handleDatabaseError(error: unknown): DatabaseErrorResponse {
     }
   }
 
-  // Debug logging to help identify issues (only in development)
   if (process.env.NODE_ENV === "development") {
     console.log("Error Handler Debug:", {
       originalMessage: error.message,
@@ -45,8 +38,6 @@ export function handleDatabaseError(error: unknown): DatabaseErrorResponse {
       processedMessage: errorMessage,
     });
   }
-
-  // Foreign key constraint violations - check both constraint name and message
   if (
     constraintName.includes("books_category_id_categories_id_fk") ||
     errorMessage.includes("books_category_id_categories_id_fk")
@@ -64,6 +55,26 @@ export function handleDatabaseError(error: unknown): DatabaseErrorResponse {
     return {
       status: 400,
       error: "Invalid author ID. The specified author does not exist.",
+    };
+  }
+
+  if (
+    constraintName.includes("book_tags_book_id_books_id_fk") ||
+    errorMessage.includes("book_tags_book_id_books_id_fk")
+  ) {
+    return {
+      status: 400,
+      error: "Invalid book ID. The specified book does not exist.",
+    };
+  }
+
+  if (
+    constraintName.includes("book_tags_tag_id_tags_id_fk") ||
+    errorMessage.includes("book_tags_tag_id_tags_id_fk")
+  ) {
+    return {
+      status: 400,
+      error: "Invalid tag ID. One or more specified tags do not exist.",
     };
   }
 
@@ -103,7 +114,28 @@ export function handleDatabaseError(error: unknown): DatabaseErrorResponse {
         error: "Email address is already registered. Please use another.",
       };
     }
-    // General username/email detection
+
+    // Specific books-related table constraints
+    if (
+      constraintName.includes("categories_name_unique") ||
+      errorMessage.includes("categories_name_unique")
+    ) {
+      return {
+        status: 409,
+        error: "Category name already exists. Please choose a different name.",
+      };
+    }
+    if (
+      constraintName.includes("tags_name_unique") ||
+      errorMessage.includes("tags_name_unique")
+    ) {
+      return {
+        status: 409,
+        error: "Tag name already exists. Please choose a different name.",
+      };
+    }
+
+    // General field-specific detection
     if (errorMessage.includes("username")) {
       return {
         status: 409,
@@ -114,6 +146,18 @@ export function handleDatabaseError(error: unknown): DatabaseErrorResponse {
       return {
         status: 409,
         error: "Email address is already registered. Please use another.",
+      };
+    }
+    if (errorMessage.includes("category") && errorMessage.includes("name")) {
+      return {
+        status: 409,
+        error: "Category name already exists. Please choose a different name.",
+      };
+    }
+    if (errorMessage.includes("tag") && errorMessage.includes("name")) {
+      return {
+        status: 409,
+        error: "Tag name already exists. Please choose a different name.",
       };
     }
     return {
@@ -176,6 +220,14 @@ export function handleDatabaseError(error: unknown): DatabaseErrorResponse {
     return {
       status: 409,
       error: "Cannot delete this record because it's referenced by other data.",
+    };
+  }
+
+  // Not found errors from services
+  if (errorMessage.includes("not found")) {
+    return {
+      status: 404,
+      error: error.message,
     };
   }
 

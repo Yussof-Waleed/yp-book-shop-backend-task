@@ -1,10 +1,9 @@
-// User profile controller - handles HTTP requests for user profile operations
 import type { Context } from "hono";
 import { getUserById, updateProfile, changePassword } from "./service.js";
 import { sendErrorResponse } from "../common/errorHandler.js";
 
 export class UsersController {
-  // GET /users/profile - Get current user's profile
+  // GET /users/profile
   public static async getProfile(c: Context) {
     try {
       const userInfo = c.get("user");
@@ -32,7 +31,7 @@ export class UsersController {
     }
   }
 
-  // PUT /users/profile - Update user profile
+  // PUT /users/profile
   public static async editProfile(c: Context) {
     try {
       const userInfo = c.get("user");
@@ -51,7 +50,7 @@ export class UsersController {
     }
   }
 
-  // PUT /users/change-password - Change user password
+  // PUT /users/change-password
   public static async changePassword(c: Context) {
     try {
       const userInfo = c.get("user");
@@ -67,11 +66,9 @@ export class UsersController {
     } catch (error) {
       console.error("Error in changePassword:", error);
 
-      // Handle specific business logic errors
       if (error instanceof Error) {
         const errorMsg = error.message;
 
-        // Business logic errors (not database errors)
         if (
           errorMsg === "User not found" ||
           errorMsg === "Invalid old password"
@@ -87,7 +84,6 @@ export class UsersController {
         }
       }
 
-      // Handle database and other errors with centralized handler
       return sendErrorResponse(c, error);
     }
   }

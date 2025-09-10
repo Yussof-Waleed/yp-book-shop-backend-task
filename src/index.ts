@@ -6,6 +6,7 @@ import { env } from "./common/env.js";
 
 import authRoutes from "./auth/routes.js";
 import userRoutes from "./users/routes.js";
+import bookRoutes from "./books/routes.js";
 
 const app = new Hono();
 
@@ -13,6 +14,7 @@ app.use("*", logger());
 
 app.route("/auth", authRoutes);
 app.route("/profile", userRoutes);
+app.route("/books", bookRoutes);
 
 app.get("/", (c) => {
   return c.json({

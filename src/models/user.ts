@@ -1,4 +1,3 @@
-// User model for Drizzle ORM - Centralized user schema
 import { pgTable, serial, varchar, timestamp } from "drizzle-orm/pg-core";
 
 export const users = pgTable("users", {

@@ -1,6 +1,5 @@
 import { z } from "zod";
 
-// Edit profile validation schema
 export const editProfileSchema = z
   .object({
     name: z
@@ -31,7 +30,6 @@ export const editProfileSchema = z
     message: "At least one field (name, username, or email) must be provided",
   });
 
-// Change password validation schema
 export const changePasswordSchema = z
   .object({
     oldPassword: z.string().min(1, "Current password is required"),
@@ -45,6 +43,5 @@ export const changePasswordSchema = z
     path: ["newPassword"],
   });
 
-// Type exports for better type safety
 export type EditProfileInput = z.infer<typeof editProfileSchema>;
 export type ChangePasswordInput = z.infer<typeof changePasswordSchema>;

@@ -1,4 +1,3 @@
-// User profile service
 import { db } from "../common/db.js";
 import { users } from "../models/index.js";
 import bcrypt from "bcrypt";
@@ -18,7 +17,6 @@ export async function getUserById(id: number) {
     .limit(1);
 }
 
-// Internal function to get user with password for authentication
 export async function getUserWithPasswordById(id: number) {
   return db.select().from(users).where(eq(users.id, id)).limit(1);
 }

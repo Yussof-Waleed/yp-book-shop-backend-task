@@ -1,6 +1,5 @@
 import { z } from "zod";
 
-// Environment variables validation schema
 const envSchema = z.object({
   DATABASE_URL: z.string().min(1, "DATABASE_URL is required"),
   REDIS_URL: z.string().min(1, "REDIS_URL is required"),
@@ -11,7 +10,6 @@ const envSchema = z.object({
   PORT: z.coerce.number().default(3000),
 });
 
-// Parse and validate environment variables
 const parseEnv = () => {
   try {
     return envSchema.parse({
@@ -38,7 +36,6 @@ const parseEnv = () => {
       });
     }
 
-    // Don't exit in test environment to avoid breaking tests
     if (process.env.NODE_ENV !== "test") {
       process.exit(1);
     } else {
@@ -47,5 +44,4 @@ const parseEnv = () => {
   }
 };
 
-// Centralized environment config with validation
 export const env = parseEnv();

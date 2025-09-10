@@ -1,6 +1,5 @@
 import { z } from "zod";
 
-// Register validation schema
 export const registerSchema = z.object({
   name: z
     .string()
@@ -28,7 +27,6 @@ export const registerSchema = z.object({
     .max(64, "Password cannot exceed 64 characters"),
 });
 
-// Login validation schema
 export const loginSchema = z.object({
   identifier: z
     .string()
@@ -37,7 +35,6 @@ export const loginSchema = z.object({
   password: z.string().min(1, "Password is required"),
 });
 
-// Forgot password validation schema
 export const forgotPasswordSchema = z.object({
   email: z
     .string()
@@ -45,7 +42,6 @@ export const forgotPasswordSchema = z.object({
     .max(255, "Email cannot exceed 255 characters"),
 });
 
-// Reset password validation schema
 export const resetPasswordSchema = z.object({
   email: z
     .string()
@@ -61,7 +57,6 @@ export const resetPasswordSchema = z.object({
     .max(64, "Password cannot exceed 64 characters"),
 });
 
-// Type exports for better type safety
 export type RegisterInput = z.infer<typeof registerSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;
 export type ForgotPasswordInput = z.infer<typeof forgotPasswordSchema>;

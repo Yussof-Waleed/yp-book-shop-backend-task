@@ -1,4 +1,3 @@
-// User profile routes
 import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
 import { UsersController } from "./controller.js";
