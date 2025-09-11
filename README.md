@@ -47,13 +47,40 @@ cd yp-book-shop-backend-task
 
 ### 2. Environment Setup
 
-```bash
+````bash
 # Copy environment file
 cp .env.example .env
 
 # Edit .env file with your preferred values (optional - defaults work fine)
 # The default configuration is ready to use with Docker
-```
+
+# Environment Setup Instructions
+
+## Creating your `.env.local` file
+
+For local development and testing, please create a `.env.local` file in the root directory of the project with the following content:
+
+```bash
+# Local testing environment configuration
+# This file is used when running tests locally against Docker services
+
+# Use external database URL for local testing
+DATABASE_URL=postgres://postgres:postgres@localhost:5434/books_shop
+REDIS_URL=redis://localhost:6380
+
+# JWT Configuration
+JWT_SECRET=your-super-secure-jwt-secret-key-minimum-32-characters-long
+
+# Environment
+NODE_ENV=test
+
+# Server Configuration
+PORT=3000
+````
+
+simply copy the content from the code block above and paste it into a new file named `.env.local` in the project root.
+
+````
 
 ### 3. Start with Docker (Recommended)
 
@@ -63,7 +90,7 @@ docker-compose up --build
 
 # Or run in background
 docker-compose up --build -d
-```
+````
 
 The API will be available at `http://localhost:3000`
 
