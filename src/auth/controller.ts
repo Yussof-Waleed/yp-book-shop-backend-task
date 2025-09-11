@@ -6,7 +6,7 @@ import {
   generatePasswordResetOTP,
   verifyOTPAndResetPassword,
 } from "./service.js";
-import { sendErrorResponse } from "@/common/errorHandler.js";
+import { sendErrorResponse } from "../common/errorHandler.js";
 
 export class AuthController {
   // POST /auth/register

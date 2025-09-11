@@ -39,6 +39,7 @@ export class BookService {
       category_id,
       min_price,
       max_price,
+      tag_ids,
       page = 1,
       limit = 10,
     } = filters;
@@ -62,6 +63,17 @@ export class BookService {
     }
     if (max_price !== undefined) {
       whereConditions.push(sql`${books.price}::numeric <= ${max_price}`);
+    }
+
+    // Filter by tags if provided
+    if (tag_ids && tag_ids.length > 0) {
+      whereConditions.push(
+        sql`${books.id} IN (
+          SELECT ${bookTags.book_id} 
+          FROM ${bookTags} 
+          WHERE ${inArray(bookTags.tag_id, tag_ids)}
+        )`,
+      );
     }
     let orderBy;
     switch (sort) {
@@ -108,10 +120,45 @@ export class BookService {
       .limit(limit)
       .offset(offset);
 
+    // Build the same where conditions for count query
+    const countWhereConditions = [];
+
+    if (search) {
+      countWhereConditions.push(
+        sql`LOWER(${books.title}) LIKE LOWER(${`%${search}%`})`,
+      );
+    }
+
+    if (category_id) {
+      countWhereConditions.push(eq(books.category_id, category_id));
+    }
+
+    if (min_price !== undefined) {
+      countWhereConditions.push(sql`${books.price}::numeric >= ${min_price}`);
+    }
+    if (max_price !== undefined) {
+      countWhereConditions.push(sql`${books.price}::numeric <= ${max_price}`);
+    }
+
+    if (tag_ids && tag_ids.length > 0) {
+      countWhereConditions.push(
+        sql`${books.id} IN (
+          SELECT ${bookTags.book_id} 
+          FROM ${bookTags} 
+          WHERE ${inArray(bookTags.tag_id, tag_ids)}
+        )`,
+      );
+    }
+
+    const countWhereClause =
+      countWhereConditions.length > 0
+        ? and(...countWhereConditions)
+        : undefined;
+
     const totalCountResult = await db
       .select({ count: sql<number>`count(*)` })
       .from(books)
-      .where(whereClause);
+      .where(countWhereClause);
 
     const total = totalCountResult[0]?.count || 0;
 

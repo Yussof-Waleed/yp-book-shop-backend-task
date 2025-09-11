@@ -571,4 +571,145 @@ describe("Books Service", () => {
     await db.delete(tags).where(eq(tags.id, testTag1.id));
     await db.delete(tags).where(eq(tags.id, testTag2.id));
   });
+
+  it("should filter books by tags", async () => {
+    const timestamp = Date.now();
+
+    // Create unique tags for this test
+    const programmingTag = await BookService.createTag(
+      `Programming_${timestamp}`,
+    );
+    const beginnersTag = await BookService.createTag(`Beginners_${timestamp}`);
+    const advancedTag = await BookService.createTag(`Advanced_${timestamp}`);
+
+    // Create books with different tag combinations
+    const book1 = await BookService.createBook(testUserId, {
+      title: "JavaScript for Beginners",
+      price: "19.99",
+      category_id: testCategoryId,
+      tag_ids: [programmingTag.id, beginnersTag.id],
+    });
+
+    const book2 = await BookService.createBook(testUserId, {
+      title: "Advanced Python Techniques",
+      price: "39.99",
+      category_id: testCategoryId,
+      tag_ids: [programmingTag.id, advancedTag.id],
+    });
+
+    const book3 = await BookService.createBook(testUserId, {
+      title: "Cooking Basics",
+      price: "15.99",
+      category_id: testCategoryId,
+      tag_ids: [beginnersTag.id], // Only beginners tag, no programming
+    });
+
+    expect(book1).toBeDefined();
+    expect(book2).toBeDefined();
+    expect(book3).toBeDefined();
+
+    // Test filtering by programming tag - should return 2 books
+    const programmingBooks = await BookService.getAllBooks({
+      tag_ids: [programmingTag.id],
+    });
+
+    const matchingProgBooks = programmingBooks.data.filter((book) =>
+      [book1!.id, book2!.id].includes(book.id),
+    );
+    expect(matchingProgBooks.length).toBe(2);
+
+    // Test filtering by beginners tag - should return 2 books
+    const beginnersBooks = await BookService.getAllBooks({
+      tag_ids: [beginnersTag.id],
+    });
+
+    const matchingBegBooks = beginnersBooks.data.filter((book) =>
+      [book1!.id, book3!.id].includes(book.id),
+    );
+    expect(matchingBegBooks.length).toBe(2);
+
+    // Test filtering by multiple tags (AND operation) - should return 1 book
+    const specificBooks = await BookService.getAllBooks({
+      tag_ids: [programmingTag.id, beginnersTag.id],
+    });
+
+    const matchingSpecBooks = specificBooks.data.filter(
+      (book) => book.id === book1!.id,
+    );
+    expect(matchingSpecBooks.length).toBe(1);
+
+    // Test filtering by advanced tag - should return 1 book
+    const advancedBooks = await BookService.getAllBooks({
+      tag_ids: [advancedTag.id],
+    });
+
+    const matchingAdvBooks = advancedBooks.data.filter(
+      (book) => book.id === book2!.id,
+    );
+    expect(matchingAdvBooks.length).toBe(1);
+
+    // Clean up
+    await db.delete(books).where(eq(books.id, book1!.id));
+    await db.delete(books).where(eq(books.id, book2!.id));
+    await db.delete(books).where(eq(books.id, book3!.id));
+    await db.delete(tags).where(eq(tags.id, programmingTag.id));
+    await db.delete(tags).where(eq(tags.id, beginnersTag.id));
+    await db.delete(tags).where(eq(tags.id, advancedTag.id));
+  });
+
+  it("should combine multiple filters (category, price, tags)", async () => {
+    const timestamp = Date.now();
+
+    // Create test data
+    const techCategory = await BookService.createCategory(
+      `Tech_${timestamp}`,
+      "Technology books",
+    );
+    const webTag = await BookService.createTag(`Web_${timestamp}`);
+    const jsTag = await BookService.createTag(`JavaScript_${timestamp}`);
+
+    const book1 = await BookService.createBook(testUserId, {
+      title: "Affordable Web Development",
+      price: "25.00",
+      category_id: techCategory.id,
+      tag_ids: [webTag.id],
+    });
+
+    const book2 = await BookService.createBook(testUserId, {
+      title: "Premium JavaScript Guide",
+      price: "45.00",
+      category_id: techCategory.id,
+      tag_ids: [webTag.id, jsTag.id],
+    });
+
+    const book3 = await BookService.createBook(testUserId, {
+      title: "Budget Web Basics",
+      price: "15.00",
+      category_id: testCategoryId, // Different category
+      tag_ids: [webTag.id],
+    });
+
+    // Test: Tech category + max price $30 + web tag = should return book1 only
+    const filteredBooks = await BookService.getAllBooks({
+      category_id: techCategory.id,
+      max_price: 30,
+      tag_ids: [webTag.id],
+    });
+
+    const matchingBooks = filteredBooks.data.filter((book) =>
+      [book1!.id, book2!.id, book3!.id].includes(book.id),
+    );
+
+    expect(matchingBooks.length).toBe(1);
+    expect(matchingBooks[0].id).toBe(book1!.id);
+    expect(matchingBooks[0].title).toBe("Affordable Web Development");
+
+    // Clean up
+    await db.delete(books).where(eq(books.id, book1!.id));
+    await db.delete(books).where(eq(books.id, book2!.id));
+    await db.delete(books).where(eq(books.id, book3!.id));
+    await db.delete(categories).where(eq(categories.id, techCategory.id));
+    await db.delete(tags).where(eq(tags.id, webTag.id));
+    await db.delete(tags).where(eq(tags.id, jsTag.id));
+  });
 });

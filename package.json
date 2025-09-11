@@ -32,7 +32,9 @@
     "docker:down": "docker-compose down",
     "docker:logs": "docker-compose logs -f api",
     "docker:shell": "docker-compose exec api sh",
-    "docker:start": "sh scripts/docker-start.sh"
+    "docker:start": "sh scripts/docker-start.sh",
+    "db:seed": "tsx src/scripts/seed.ts",
+    "db:reset": "tsx src/scripts/reset-and-seed.ts"
   },
   "dependencies": {
     "@hono/node-server": "^1.19.0",

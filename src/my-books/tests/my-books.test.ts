@@ -133,6 +133,68 @@ describe("My Books Service", () => {
     expect(searchResults.data[0].title).toContain("JavaScript Guide");
   });
 
+  it("should sort user's books by title A-Z and Z-A", async () => {
+    const timestamp = Date.now();
+
+    // Create books with different titles for sorting
+    await MyBooksService.createUserBook(testUserId, {
+      title: `Zebra Book ${timestamp}`,
+      price: "20.00",
+      category_id: testCategoryId,
+    });
+
+    await MyBooksService.createUserBook(testUserId, {
+      title: `Apple Book ${timestamp}`,
+      price: "25.00",
+      category_id: testCategoryId,
+    });
+
+    await MyBooksService.createUserBook(testUserId, {
+      title: `Banana Book ${timestamp}`,
+      price: "30.00",
+      category_id: testCategoryId,
+    });
+
+    // Test ascending sort (A-Z)
+    const ascResults = await MyBooksService.getUserBooks(testUserId, {
+      page: 1,
+      limit: 10,
+      sort: "title_asc",
+    });
+
+    expect(ascResults.data.length).toBeGreaterThanOrEqual(3);
+
+    // Find our test books in the results
+    const testBooks = ascResults.data.filter((book) =>
+      book.title.includes(`Book ${timestamp}`),
+    );
+    expect(testBooks.length).toBe(3);
+
+    // Check ascending order
+    const titles = testBooks.map((book) => book.title);
+    expect(titles[0]).toContain("Apple");
+    expect(titles[1]).toContain("Banana");
+    expect(titles[2]).toContain("Zebra");
+
+    // Test descending sort (Z-A)
+    const descResults = await MyBooksService.getUserBooks(testUserId, {
+      page: 1,
+      limit: 10,
+      sort: "title_desc",
+    });
+
+    const testBooksDesc = descResults.data.filter((book) =>
+      book.title.includes(`Book ${timestamp}`),
+    );
+    expect(testBooksDesc.length).toBe(3);
+
+    // Check descending order
+    const titlesDesc = testBooksDesc.map((book) => book.title);
+    expect(titlesDesc[0]).toContain("Zebra");
+    expect(titlesDesc[1]).toContain("Banana");
+    expect(titlesDesc[2]).toContain("Apple");
+  });
+
   it("should update user's book", async () => {
     // Create a book
     const book = await MyBooksService.createUserBook(testUserId, {
