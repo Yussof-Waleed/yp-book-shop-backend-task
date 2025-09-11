@@ -7,14 +7,17 @@ import { env } from "./common/env.js";
 import authRoutes from "./auth/routes.js";
 import userRoutes from "./users/routes.js";
 import bookRoutes from "./books/routes.js";
+import myBooksRoutes from "./my-books/routes.js";
+import type { AuthVariables } from "./auth/middleware.js";
 
-const app = new Hono();
+const app = new Hono<{ Variables: AuthVariables }>();
 
 app.use("*", logger());
 
 app.route("/auth", authRoutes);
 app.route("/profile", userRoutes);
 app.route("/books", bookRoutes);
+app.route("/my-books", myBooksRoutes);
 
 app.get("/", (c) => {
   return c.json({
